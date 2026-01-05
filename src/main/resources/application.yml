@@ -1,0 +1,28 @@
+server:
+    port: 8080
+
+spring:
+    application:
+        name: news-provenance-platform
+fuseki:
+    endpoint: http://localhost:3030
+    dataset: news
+    sparql-query-url: ${fuseki.endpoint}/${fuseki.dataset}/query
+    sparql-update-url: ${fuseki.endpoint}/${fuseki.dataset}/update
+    graph-store-url: ${fuseki.endpoint}/${fuseki.dataset}/data
+
+dbpedia:
+    sparql-endpoint: https://dbpedia.org/sparql
+
+wikidata:
+    sparql-endpoint: https://query.wikidata.org/sparql
+# Namespace configuration
+rdf:
+    namespaces:
+        base: http://example.org/news/
+        schema: http://schema.org/
+        dc: http://purl.org/dc/elements/1.1/
+        dcterms: http://purl.org/dc/terms/
+        foaf: http://xmlns.com/foaf/0.1/
+        prov: http://www.w3.org/ns/prov#
+        skos: http://www.w3.org/2004/02/skos/core#
