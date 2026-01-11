@@ -31,7 +31,6 @@ public class SPARQLService {
         return out.toString(StandardCharsets.UTF_8);
     }
 
-    // FE-friendly: parametric search (title/desc/body/topic/label + filters)
     public String buildSearchQuery(ArticleSearchRequest request) {
         ParameterizedSparqlString pss = new ParameterizedSparqlString();
         pss.setNsPrefix("schema", "http://schema.org/");

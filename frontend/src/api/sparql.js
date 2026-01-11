@@ -1,5 +1,5 @@
-import { http } from "./http";
 import { API } from "./endpoints";
+import http from "./http.js";
 
 export async function searchArticles(req) {
     const { data } = await http.post(API.SEARCH, req);

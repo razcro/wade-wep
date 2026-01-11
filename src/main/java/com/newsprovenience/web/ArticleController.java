@@ -42,7 +42,7 @@ public class ArticleController {
         return ResponseEntity.ok(results);
     }
 
-    @PostMapping("/search/semantic")
+    @PostMapping("/search/sparql")
     public ResponseEntity<String> searchSemantic(@RequestBody ArticleSearchRequest request) {
         String sparql = sparqlService.buildSearchQuery(request);
         String json = sparqlService.executeQuery(sparql, "json");

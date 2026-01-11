@@ -1,4 +1,4 @@
 export const API = {
-    SEARCH: "/api/articles/search/sparql",
-    SPARQL: "/api/sparql",
+    SEARCH: "/articles/search/sparql",
+    SPARQL: "/sparql",
 };
