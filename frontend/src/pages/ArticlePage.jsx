@@ -79,15 +79,13 @@ export default function ArticlePage() {
     PREFIX dc: <http://purl.org/dc/elements/1.1/>
 
     SELECT ?concept ?label ?subject
-    WHERE {
-      GRAPH ?g {
+    WHERE {      
         OPTIONAL { <${articleUri}> dc:subject ?subject . }
         OPTIONAL {
           <${articleUri}> schema:about ?concept .
           OPTIONAL { ?concept skos:prefLabel ?label . }
         }
       }
-    }
     LIMIT 200
   `, [articleUri]);
 
@@ -101,13 +99,11 @@ export default function ArticlePage() {
     const qMedia = useMemo(() => `
     PREFIX schema: <http://schema.org/>
     SELECT ?media ?contentUrl ?format
-    WHERE {
-      GRAPH ?g {
+    WHERE {      
         <${articleUri}> schema:associatedMedia ?media .
         OPTIONAL { ?media schema:contentUrl ?contentUrl . }
         OPTIONAL { ?media schema:encodingFormat ?format . }
-      }
-    }
+      }    
     LIMIT 200
   `, [articleUri]);
 
@@ -124,7 +120,7 @@ export default function ArticlePage() {
 
     SELECT ?activity ?used ?when ?agentName
     WHERE {
-      GRAPH ?g {
+     
         <${articleUri}> prov:wasGeneratedBy ?activity .
         OPTIONAL { ?activity prov:used ?used . }
         OPTIONAL { ?activity prov:endedAtTime ?when . }
@@ -133,7 +129,7 @@ export default function ArticlePage() {
           OPTIONAL { ?agent schema:name ?agentName . }
         }
       }
-    }
+  
     LIMIT 200
   `, [articleUri]);
 
@@ -149,13 +145,16 @@ export default function ArticlePage() {
 
     SELECT ?other ?title (COUNT(?c) AS ?score)
     WHERE {
-      GRAPH ?g {
+        # 1. Aflăm despre ce este articolul curent (?c)
         <${articleUri}> schema:about ?c .
+
+        # 2. Căutăm alte articole care sunt despre același subiect ?c
         ?other a schema:NewsArticle ;
                schema:about ?c ;
                schema:headline ?title .
-      }
-      FILTER(?other != <${articleUri}>)
+      
+        # 3. Excludem articolul curent (nu ne recomandăm singuri)
+        FILTER(?other != <${articleUri}>)
     }
     GROUP BY ?other ?title
     ORDER BY DESC(?score)
@@ -172,12 +171,10 @@ export default function ArticlePage() {
     const qGraph = useMemo(() => `
     SELECT ?s ?p ?o
     WHERE {
-      GRAPH ?g {
         { BIND(<${articleUri}> AS ?s) <${articleUri}> ?p ?o . }
         UNION
         { <${articleUri}> ?p1 ?mid . ?mid ?p ?o . BIND(?mid AS ?s) }
       }
-    }
     LIMIT 400
   `, [articleUri]);
 
