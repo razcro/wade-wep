@@ -39,23 +39,21 @@ public class SPARQLService {
         pss.setNsPrefix("xsd", "http://www.w3.org/2001/XMLSchema#");
 
         pss.append("""
-            SELECT ?article ?title ?description ?language ?wordCount ?published ?genre
-            WHERE {
-              GRAPH ?g {
-                ?article a schema:NewsArticle ;
-                         schema:headline ?title .
-                OPTIONAL { ?article schema:description ?description . }
-                OPTIONAL { ?article schema:inLanguage ?language . }
-                OPTIONAL { ?article schema:wordCount ?wordCount . }
-                OPTIONAL { ?article schema:datePublished ?published . }
-                OPTIONAL { ?article schema:genre ?genre . }
-                OPTIONAL { ?article dc:subject ?subject . }
-                OPTIONAL {
-                  ?article schema:about ?c .
-                  OPTIONAL { ?c skos:prefLabel ?cLabel . }
-                }
-              }
-        """);
+        SELECT ?article ?title ?description ?language ?wordCount ?published ?genre
+        WHERE {
+            ?article a schema:NewsArticle ;
+                     schema:headline ?title .
+            OPTIONAL { ?article schema:description ?description . }
+            OPTIONAL { ?article schema:inLanguage ?language . }
+            OPTIONAL { ?article schema:wordCount ?wordCount . }
+            OPTIONAL { ?article schema:datePublished ?published . }
+            OPTIONAL { ?article schema:genre ?genre . }
+            OPTIONAL { ?article dc:subject ?subject . }
+            OPTIONAL {
+              ?article schema:about ?c .
+              OPTIONAL { ?c skos:prefLabel ?cLabel . }
+            }
+    """);
 
         if (request != null && request.getQuery() != null && !request.getQuery().isBlank()) {
             pss.append("""

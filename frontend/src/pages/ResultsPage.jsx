@@ -37,6 +37,9 @@ export default function ResultsPage() {
             {isError && <p>Search failed. Check backend endpoints and proxy.</p>}
 
             <div style={{ display: "grid", gap: 12 }}>
+                {!isLoading && !isError && rows.length === 0 && (
+                    <p>No data found.</p>
+                )}
                 {rows.map((b, i) => {
                     const articleUri = v(b, "article") ?? "";
                     const title = v(b, "title") ?? "(no title)";
