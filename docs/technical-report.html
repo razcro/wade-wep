@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NewsProvenience - Technical Report</title>
+    <link rel="stylesheet" href="https://w3c.github.io/scholarly-html/css/scholarly.min.css">
+    <style>
+        :root {
+            --accent-color: #1a73e8;
+        }
+        code {
+            background-color: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+        pre {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 16px;
+            overflow-x: auto;
+        }
+        pre code {
+            background: none;
+            padding: 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1em 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f5f5f5;
+        }
+        .architecture-diagram {
+            text-align: center;
+            margin: 2em 0;
+            padding: 1em;
+            background-color: #fafafa;
+            border-radius: 8px;
+        }
+        figure {
+            margin: 2em 0;
+            text-align: center;
+        }
+        figcaption {
+            font-style: italic;
+            color: #666;
+            margin-top: 0.5em;
+        }
+    </style>
+</head>
+<body prefix="schema: http://schema.org/ xsd: http://www.w3.org/2001/XMLSchema# sa: https://ns.science.ai/">
+    <header>
+        <h1>NewsProvenience</h1>
+        <h2>Technical Report: A Semantic Web Platform for Newspaper Article Provenance Management</h2>
+    </header>
+
+    <article typeof="schema:ScholarlyArticle" resource="#">
+        <section typeof="sa:AuthorsList">
+            <h2>Authors</h2>
+            <ul>
+                <li typeof="sa:ContributorRole" property="schema:author">
+                    <span typeof="schema:Person" resource="https://github.com/razcro/wade-wep">
+                        <span property="schema:name">Team rc-af</span>
+                    </span>
+                    <ul>
+                        <li property="schema:affiliation" typeof="schema:Organization">
+                            <span property="schema:name">Faculty of Computer Science, UAIC Iasi</span>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </section>
+
+        <section typeof="sa:Abstract" id="abstract">
+            <h2>Abstract</h2>
+            <p>
+                This technical report presents <strong>NewsProvenience</strong>, a comprehensive web application designed to model,
+                manage, and query knowledge about the provenance of online newspaper articles. The system supports multiple content
+                types including textual articles, multimedia content (images, audio podcasts, and video documentaries), with
+                multi-language capabilities. The platform implements semantic web technologies including RDF, SPARQL, and established
+                metadata standards (Dublin Core, Schema.org, IPTC, SKOS) to provide rich, queryable knowledge graphs. Integration
+                with external knowledge bases (DBpedia and Wikidata) enables automatic semantic enrichment, while a SPARQL endpoint
+                exposes data in RDFa and JSON-LD formats conforming to the CreativeWork concept from Schema.org.
+            </p>
+        </section>
+
+        <section id="introduction">
+            <h2>1. Introduction</h2>
+
+            <section id="motivation">
+                <h3>1.1 Motivation</h3>
+                <p>
+                    In the era of digital journalism, tracking the provenance of news articles has become increasingly important
+                    for combating misinformation and ensuring journalistic accountability. NewsProvenience addresses this need by
+                    providing a semantic web-based platform that captures, stores, and exposes comprehensive metadata about
+                    newspaper articles, their authors, sources, and the relationships between them.
+                </p>
+                <p>
+                    The system goes beyond simple content management by implementing the W3C PROV-O ontology for explicit
+                    provenance tracking, enabling users to trace the complete lineage of any piece of content from its original
+                    sources through to publication.
+                </p>
+            </section>
+
+            <section id="objectives">
+                <h3>1.2 Objectives</h3>
+                <ul>
+                    <li>Model and manage knowledge about newspaper article provenance using semantic web technologies</li>
+                    <li>Support diverse content types: textual articles, images, audio podcasts, video documentaries</li>
+                    <li>Implement multiple metadata standards: DCMI, IPTC, Schema.org, SKOS</li>
+                    <li>Integrate external knowledge sources: DBpedia and Wikidata</li>
+                    <li>Provide a SPARQL endpoint exposing RDFa and JSON-LD</li>
+                    <li>Enable complex queries, visualization, and content-based recommendations</li>
+                </ul>
+            </section>
+
+            <section id="tech-stack">
+                <h3>1.3 Technology Stack</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Layer</th>
+                            <th>Technology</th>
+                            <th>Version</th>
+                            <th>Purpose</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Backend Framework</td>
+                            <td>Spring Boot</td>
+                            <td>4.0.1</td>
+                            <td>REST API, Dependency Injection</td>
+                        </tr>
+                        <tr>
+                            <td>RDF Processing</td>
+                            <td>Apache Jena</td>
+                            <td>4.10.0</td>
+                            <td>RDF model creation, SPARQL execution</td>
+                        </tr>
+                        <tr>
+                            <td>Triple Store</td>
+                            <td>Apache Jena Fuseki</td>
+                            <td>4.10.0</td>
+                            <td>SPARQL endpoint, graph storage</td>
+                        </tr>
+                        <tr>
+                            <td>Relational Database</td>
+                            <td>H2 Database</td>
+                            <td>Embedded</td>
+                            <td>Transactional data storage</td>
+                        </tr>
+                        <tr>
+                            <td>Frontend Framework</td>
+                            <td>React</td>
+                            <td>19.2</td>
+                            <td>User interface</td>
+                        </tr>
+                        <tr>
+                            <td>Graph Visualization</td>
+                            <td>Cytoscape.js</td>
+                            <td>3.33.1</td>
+                            <td>RDF graph visualization</td>
+                        </tr>
+                        <tr>
+                            <td>Build Tool</td>
+                            <td>Vite</td>
+                            <td>7.2.4</td>
+                            <td>Frontend bundling</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </section>
+
+        <section id="data-structures">
+            <h2>2. Internal Data Structures and Models</h2>
+
+            <section id="dual-storage">
+                <h3>2.1 Dual Storage Architecture</h3>
+                <p>
+                    NewsProvenience employs a dual-storage architecture that combines the transactional reliability of a
+                    relational database with the semantic flexibility of an RDF triple store. This hybrid approach allows
+                    the system to leverage the strengths of both paradigms:
+                </p>
+                <ul>
+                    <li><strong>Relational Database (H2)</strong>: Handles ACID-compliant transactions, entity relationships,
+                    and efficient structured queries</li>
+                    <li><strong>RDF Triple Store (Fuseki)</strong>: Enables semantic queries, linked data exposure, and
+                    integration with external knowledge graphs</li>
+                </ul>
+
+                <div class="architecture-diagram">
+                    <pre>
+┌─────────────────────────────────────────────────────────────────┐
+│                     NewsProvenience Architecture                 │
+├─────────────────────────────────────────────────────────────────┤
+│  ┌─────────────┐    ┌──────────────┐    ┌─────────────────┐    │
+│  │   React     │───▶│  Spring Boot │───▶│   H2 Database   │    │
+│  │  Frontend   │    │   REST API   │    │  (Relational)   │    │
+│  └─────────────┘    └──────┬───────┘    └─────────────────┘    │
+│                            │                                    │
+│                            ▼                                    │
+│                   ┌──────────────────┐                         │
+│                   │   Apache Jena    │                         │
+│                   │   RDF Service    │                         │
+│                   └────────┬─────────┘                         │
+│                            │                                    │
+│              ┌─────────────┼─────────────┐                     │
+│              ▼             ▼             ▼                     │
+│    ┌─────────────┐  ┌───────────┐  ┌───────────┐              │
+│    │   Fuseki    │  │  DBpedia  │  │ Wikidata  │              │
+│    │ Triple Store│  │  SPARQL   │  │  SPARQL   │              │
+│    └─────────────┘  └───────────┘  └───────────┘              │
+└─────────────────────────────────────────────────────────────────┘
+                    </pre>
+                </div>
+            </section>
+
+            <section id="entity-model">
+                <h3>2.2 Core Entity Model</h3>
+
+                <section id="article-entity">
+                    <h4>2.2.1 Article Entity</h4>
+                    <p>
+                        The <code>Article</code> entity is the central data structure representing newspaper content.
+                        It captures both the content itself and extensive metadata required for provenance tracking.
+                    </p>
+                    <pre><code>@Entity
+@Table(name = "articles")
+public class Article {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, unique = true)
+    private String uri;                    // RDF URI identifier
+
+    @Column(nullable = false, length = 1000)
+    private String title;                  // Article headline
+
+    @Column(length = 5000)
+    private String description;            // Summary/abstract
+
+    @Column(columnDefinition = "TEXT")
+    private String content;                // Full article body
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id")
+    private Author author;                 // Attribution
+
+    @Column(length = 10)
+    private String language;               // ISO 639-1 code
+
+    private Integer wordCount;             // Content length metric
+
+    @Enumerated(EnumType.STRING)
+    private MediaType mediaType;           // Article, Documentary, Podcast, Investigation
+
+    private LocalDateTime publishedDate;   // Publication timestamp
+
+    @ManyToMany
+    @JoinTable(name = "article_topics")
+    private Set&lt;Topic&gt; topics;            // Subject classification
+
+    @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
+    private List&lt;ArticleMetadata&gt; metadata; // Extensible metadata
+
+    @ElementCollection
+    private Set&lt;String&gt; sources;          // Source URLs for provenance
+
+    private String thumbnailUrl;           // Associated media
+    private String originalUrl;            // Source URL
+
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
+}</code></pre>
+                </section>
+
+                <section id="author-entity">
+                    <h4>2.2.2 Author Entity</h4>
+                    <p>
+                        The <code>Author</code> entity models journalists and content creators with links to external
+                        knowledge bases for enhanced biographical information.
+                    </p>
+                    <pre><code>@Entity
+@Table(name = "authors")
+public class Author {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true)
+    private String uri;                    // RDF URI identifier
+
+    @Column(nullable = false)
+    private String name;                   // Display name
+
+    private String email;                  // Contact information
+    private String nationality;            // Country of origin
+
+    @Column(length = 2000)
+    private String bio;                    // Biography
+
+    private String affiliation;            // Publisher/Organization
+
+    private String dbpediaUri;             // Link to DBpedia resource
+    private String wikidataUri;            // Link to Wikidata item
+
+    @OneToMany(mappedBy = "author")
+    private List&lt;Article&gt; articles;       // Published works
+}</code></pre>
+                </section>
+
+                <section id="topic-entity">
+                    <h4>2.2.3 Topic Entity</h4>
+                    <p>
+                        The <code>Topic</code> entity implements SKOS concepts for subject classification,
+                        enabling semantic categorization of articles.
+                    </p>
+                    <pre><code>@Entity
+@Table(name = "topics")
+public class Topic {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(unique = true)
+    private String uri;                    // SKOS concept URI
+
+    @Column(nullable = false, unique = true)
+    private String name;                   // Preferred label
+
+    @Column(length = 1000)
+    private String description;            // Scope note
+
+    private String dbpediaUri;             // External reference
+
+    @ManyToMany(mappedBy = "topics")
+    private Set&lt;Article&gt; articles;        // Related articles
+}</code></pre>
+                </section>
+
+                <section id="metadata-entity">
+                    <h4>2.2.4 ArticleMetadata Entity</h4>
+                    <p>
+                        The <code>ArticleMetadata</code> entity provides a flexible key-value store supporting
+                        multiple metadata standards (DCMI, IPTC, Schema.org).
+                    </p>
+                    <pre><code>@Entity
+@Table(name = "article_metadata")
+public class ArticleMetadata {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "article_id", nullable = false)
+    private Article article;
+
+    @Column(nullable = false, length = 100)
+    private String metadataKey;            // Property name
+
+    @Column(columnDefinition = "TEXT")
+    private String metadataValue;          // Property value
+
+    @Column(length = 50)
+    private String standard;               // DCMI, IPTC, Schema.org
+}</code></pre>
+                </section>
+            </section>
+
+            <section id="media-types">
+                <h3>2.3 Content Type Classification</h3>
+                <p>
+                    NewsProvenience supports diverse content types through the <code>MediaType</code> enumeration:
+                </p>
+                <pre><code>public enum MediaType {
+    ARTICLE,        // Standard news article (textual)
+    DOCUMENTARY,    // Video documentary content
+    PODCAST,        // Audio content (streaming)
+    INVESTIGATION   // Investigative journalism piece
+}</code></pre>
+                <p>
+                    Each media type maps to corresponding Schema.org types:
+                </p>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>MediaType</th>
+                            <th>Schema.org Type</th>
+                            <th>Associated Media Object</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>ARTICLE</td>
+                            <td>schema:NewsArticle</td>
+                            <td>schema:ImageObject</td>
+                        </tr>
+                        <tr>
+                            <td>DOCUMENTARY</td>
+                            <td>schema:NewsArticle + schema:VideoObject</td>
+                            <td>schema:VideoObject</td>
+                        </tr>
+                        <tr>
+                            <td>PODCAST</td>
+                            <td>schema:NewsArticle + schema:AudioObject</td>
+                            <td>schema:AudioObject</td>
+                        </tr>
+                        <tr>
+                            <td>INVESTIGATION</td>
+                            <td>schema:NewsArticle (genre: investigation)</td>
+                            <td>schema:MediaObject</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section id="er-diagram">
+                <h3>2.4 Entity-Relationship Diagram</h3>
+                <div class="architecture-diagram">
+                    <pre>
+┌──────────────────┐       ┌──────────────────┐       ┌──────────────────┐
+│     Author       │       │     Article      │       │      Topic       │
+├──────────────────┤       ├──────────────────┤       ├──────────────────┤
+│ id (PK)          │       │ id (PK)          │       │ id (PK)          │
+│ uri              │◄──────┤ author_id (FK)   │       │ uri              │
+│ name             │  1:N  │ uri              │  M:N  │ name             │
+│ email            │       │ title            ├──────▶│ description      │
+│ nationality      │       │ description      │       │ dbpediaUri       │
+│ bio              │       │ content          │       └──────────────────┘
+│ affiliation      │       │ language         │
+│ dbpediaUri       │       │ wordCount        │       ┌──────────────────┐
+│ wikidataUri      │       │ mediaType        │       │ ArticleMetadata  │
+└──────────────────┘       │ publishedDate    │       ├──────────────────┤
+                           │ thumbnailUrl     │  1:N  │ id (PK)          │
+                           │ originalUrl      ├──────▶│ article_id (FK)  │
+                           │ createdAt        │       │ metadataKey      │
+                           │ updatedAt        │       │ metadataValue    │
+                           └──────────────────┘       │ standard         │
+                                    │                 └──────────────────┘
+                                    │ 1:N
+                                    ▼
+                           ┌──────────────────┐
+                           │ article_sources  │
+                           ├──────────────────┤
+                           │ article_id (FK)  │
+                           │ source_url       │
+                           └──────────────────┘
+                    </pre>
+                </div>
+            </section>
+        </section>
+
+        <section id="api">
+            <h2>3. REST API Technical Aspects</h2>
+
+            <section id="api-architecture">
+                <h3>3.1 API Architecture</h3>
+                <p>
+                    NewsProvenience implements a RESTful API following best practices for resource-oriented design.
+                    The API is organized into logical controllers, each handling a specific domain:
+                </p>
+                <ul>
+                    <li><code>ArticleController</code>: CRUD operations and search for articles</li>
+                    <li><code>SPARQLController</code>: SPARQL query execution and predefined queries</li>
+                    <li><code>AnalyticsController</code>: Statistical aggregations</li>
+                </ul>
+            </section>
+
+            <section id="article-endpoints">
+                <h3>3.2 Article Management Endpoints</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Method</th>
+                            <th>Endpoint</th>
+                            <th>Description</th>
+                            <th>Request Body</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>POST</td>
+                            <td>/api/articles</td>
+                            <td>Create new article with RDF generation</td>
+                            <td>ArticleDTO</td>
+                        </tr>
+                        <tr>
+                            <td>GET</td>
+                            <td>/api/articles/{id}</td>
+                            <td>Retrieve article by ID</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>POST</td>
+                            <td>/api/articles/search</td>
+                            <td>Search with filters (relational)</td>
+                            <td>SearchCriteria</td>
+                        </tr>
+                        <tr>
+                            <td>POST</td>
+                            <td>/api/articles/search/sparql</td>
+                            <td>Semantic search via SPARQL</td>
+                            <td>SearchCriteria</td>
+                        </tr>
+                        <tr>
+                            <td>GET</td>
+                            <td>/api/articles/{id}/export/jsonld</td>
+                            <td>Export as JSON-LD</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td>GET</td>
+                            <td>/api/articles/{id}/export/rdf</td>
+                            <td>Export as RDF/XML</td>
+                            <td>-</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4>3.2.1 Article Creation Flow</h4>
+                <pre><code>POST /api/articles
+Content-Type: application/json
+
+{
+    "title": "International IT Contest Winners Announced",
+    "description": "Summary of the latest programming competition results",
+    "content": "Full article text...",
+    "authorId": 1,
+    "language": "en",
+    "wordCount": 2500,
+    "mediaType": "ARTICLE",
+    "publishedDate": "2025-12-15T10:30:00",
+    "topicIds": [1, 5, 12],
+    "sources": ["https://source1.com", "https://source2.com"],
+    "thumbnailUrl": "https://cdn.example.com/image.jpg"
+}</code></pre>
+
+                <p>Upon article creation, the system automatically:</p>
+                <ol>
+                    <li>Generates a unique URI: <code>http://example.org/news/article/{slug}-{timestamp}</code></li>
+                    <li>Converts the article to RDF triples using the RDFService</li>
+                    <li>Stores the RDF graph in Fuseki with named graph versioning</li>
+                    <li>Triggers the enrichment pipeline for DBpedia/Wikidata linking</li>
+                </ol>
+            </section>
+
+            <section id="sparql-endpoints">
+                <h3>3.3 SPARQL Endpoint</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Method</th>
+                            <th>Endpoint</th>
+                            <th>Description</th>
+                            <th>Parameters</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>POST</td>
+                            <td>/api/sparql</td>
+                            <td>Execute custom SPARQL query</td>
+                            <td>query, format (json|xml|csv)</td>
+                        </tr>
+                        <tr>
+                            <td>GET</td>
+                            <td>/api/sparql/examples/fresh-editorials</td>
+                            <td>Get recent editorials by topic</td>
+                            <td>topic, dateFrom</td>
+                        </tr>
+                        <tr>
+                            <td>GET</td>
+                            <td>/api/sparql/examples/articles-by-language</td>
+                            <td>Filter by language and word count</td>
+                            <td>lang1, lang2, maxWords, topic</td>
+                        </tr>
+                        <tr>
+                            <td>GET</td>
+                            <td>/api/sparql/examples/romanian-investigations</td>
+                            <td>Romanian journalist investigations</td>
+                            <td>-</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4>3.3.1 Custom Query Execution</h4>
+                <pre><code>POST /api/sparql
+Content-Type: application/x-www-form-urlencoded
+
+query=SELECT ?title ?author WHERE {
+    ?article a schema:NewsArticle ;
+             schema:headline ?title ;
+             schema:author/schema:name ?author .
+}&format=json</code></pre>
+            </section>
+
+            <section id="search-criteria">
+                <h3>3.4 Search Criteria Model</h3>
+                <pre><code>public class SearchCriteria {
+    private String query;           // Full-text search term
+    private String language;        // ISO language code filter
+    private String mediaType;       // Content type filter
+    private Integer maxWordCount;   // Upper word limit
+    private LocalDate dateFrom;     // Publication date range start
+    private LocalDate dateTo;       // Publication date range end
+}</code></pre>
+                <p>
+                    The search criteria supports both relational queries (via JPA Specifications) and
+                    semantic queries (via dynamically constructed SPARQL).
+                </p>
+            </section>
+
+            <section id="dto-pattern">
+                <h3>3.5 DTO Pattern and Mapping</h3>
+                <p>
+                    NewsProvenience uses the Data Transfer Object pattern with MapStruct for type-safe mapping
+                    between entities and DTOs:
+                </p>
+                <pre><code>@Mapper(componentModel = "spring")
+public interface ArticleMapper {
+
+    @Mapping(target = "authorId", source = "author.id")
+    @Mapping(target = "authorName", source = "author.name")
+    @Mapping(target = "topicIds", expression = "java(mapTopicIds(article.getTopics()))")
+    ArticleDTO toDTO(Article article);
+
+    @Mapping(target = "author", ignore = true)
+    @Mapping(target = "topics", ignore = true)
+    @Mapping(target = "uri", ignore = true)
+    Article toEntity(ArticleDTO dto);
+
+    default Set&lt;Long&gt; mapTopicIds(Set&lt;Topic&gt; topics) {
+        return topics.stream()
+            .map(Topic::getId)
+            .collect(Collectors.toSet());
+    }
+}</code></pre>
+            </section>
+
+            <section id="error-handling">
+                <h3>3.6 Error Handling</h3>
+                <p>
+                    The API implements consistent error responses using Spring's exception handling:
+                </p>
+                <pre><code>@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; handleNotFound(EntityNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+            .body(new ErrorResponse("NOT_FOUND", e.getMessage()));
+    }
+
+    @ExceptionHandler(SPARQLException.class)
+    public ResponseEntity&lt;ErrorResponse&gt; handleSPARQL(SPARQLException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+            .body(new ErrorResponse("SPARQL_ERROR", e.getMessage()));
+    }
+}</code></pre>
+            </section>
+        </section>
+
+        <section id="rdf-knowledge">
+            <h2>4. RDF-Based Knowledge Models</h2>
+
+            <section id="ontologies">
+                <h3>4.1 Ontologies and Vocabularies Used</h3>
+                <p>
+                    NewsProvenience employs multiple established ontologies to create a rich, interoperable
+                    knowledge model:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Ontology</th>
+                            <th>Prefix</th>
+                            <th>Namespace</th>
+                            <th>Purpose</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Schema.org</td>
+                            <td>schema:</td>
+                            <td>http://schema.org/</td>
+                            <td>Article structure, CreativeWork, Person</td>
+                        </tr>
+                        <tr>
+                            <td>Dublin Core</td>
+                            <td>dc:</td>
+                            <td>http://purl.org/dc/elements/1.1/</td>
+                            <td>Basic metadata (source, subject, type)</td>
+                        </tr>
+                        <tr>
+                            <td>PROV-O</td>
+                            <td>prov:</td>
+                            <td>http://www.w3.org/ns/prov#</td>
+                            <td>Provenance tracking</td>
+                        </tr>
+                        <tr>
+                            <td>SKOS</td>
+                            <td>skos:</td>
+                            <td>http://www.w3.org/2004/02/skos/core#</td>
+                            <td>Topic/concept taxonomy</td>
+                        </tr>
+                        <tr>
+                            <td>FOAF</td>
+                            <td>foaf:</td>
+                            <td>http://xmlns.com/foaf/0.1/</td>
+                            <td>Person/agent modeling</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section id="rdf-conversion">
+                <h3>4.2 RDF Conversion Process</h3>
+                <p>
+                    The <code>RDFService</code> converts relational Article entities into RDF graphs using Apache Jena:
+                </p>
+                <pre><code>public Model convertArticleToRDF(Article article) {
+    Model model = ModelFactory.createDefaultModel();
+
+    // Set namespace prefixes
+    model.setNsPrefix("schema", SCHEMA_NS);
+    model.setNsPrefix("dc", DC_NS);
+    model.setNsPrefix("prov", PROV_NS);
+    model.setNsPrefix("skos", SKOS_NS);
+
+    Resource articleResource = model.createResource(article.getUri());
+
+    // Type assertions - NewsArticle extends CreativeWork
+    articleResource.addProperty(RDF.type,
+        model.createResource(SCHEMA_NS + "NewsArticle"));
+    articleResource.addProperty(RDF.type,
+        model.createResource(SCHEMA_NS + "CreativeWork"));
+
+    // Core properties with language tags
+    if (article.getTitle() != null) {
+        articleResource.addProperty(
+            model.createProperty(SCHEMA_NS, "headline"),
+            model.createLiteral(article.getTitle(), article.getLanguage()));
+    }
+
+    // Typed literals for dates
+    if (article.getPublishedDate() != null) {
+        articleResource.addProperty(
+            model.createProperty(SCHEMA_NS, "datePublished"),
+            model.createTypedLiteral(
+                article.getPublishedDate().toString(),
+                XSDDatatype.XSDdateTime));
+    }
+
+    // Word count as integer
+    if (article.getWordCount() != null) {
+        articleResource.addProperty(
+            model.createProperty(SCHEMA_NS, "wordCount"),
+            model.createTypedLiteral(article.getWordCount()));
+    }
+
+    // Author linking
+    if (article.getAuthor() != null) {
+        Resource authorResource = createAuthorResource(model, article.getAuthor());
+        articleResource.addProperty(
+            model.createProperty(SCHEMA_NS, "author"), authorResource);
+        // PROV-O attribution
+        articleResource.addProperty(
+            model.createProperty(PROV_NS, "wasAttributedTo"), authorResource);
+    }
+
+    // Topic/subject modeling with SKOS
+    for (Topic topic : article.getTopics()) {
+        Resource conceptResource = model.createResource(topic.getUri());
+        conceptResource.addProperty(RDF.type,
+            model.createResource(SKOS_NS + "Concept"));
+        conceptResource.addProperty(
+            model.createProperty(SKOS_NS, "prefLabel"),
+            model.createLiteral(topic.getName(), "en"));
+
+        articleResource.addProperty(
+            model.createProperty(SCHEMA_NS, "about"), conceptResource);
+        articleResource.addProperty(
+            model.createProperty(DC_NS, "subject"), topic.getName());
+    }
+
+    // Provenance activity
+    addProvenanceActivity(model, articleResource, article);
+
+    return model;
+}</code></pre>
+            </section>
+
+            <section id="provenance-model">
+                <h3>4.3 PROV-O Provenance Model</h3>
+                <p>
+                    NewsProvenience implements the W3C PROV-O ontology to track article provenance:
+                </p>
+                <pre><code>private void addProvenanceActivity(Model model, Resource articleResource, Article article) {
+    // Create ingestion activity
+    String activityUri = article.getUri() + "/activity/ingestion";
+    Resource activity = model.createResource(activityUri);
+    activity.addProperty(RDF.type, model.createResource(PROV_NS + "Activity"));
+
+    // Article was generated by this activity
+    articleResource.addProperty(
+        model.createProperty(PROV_NS, "wasGeneratedBy"), activity);
+
+    // Activity used source documents
+    for (String source : article.getSources()) {
+        Resource sourceResource = model.createResource(source);
+        activity.addProperty(model.createProperty(PROV_NS, "used"), sourceResource);
+    }
+
+    // Associate with system agent
+    Resource agent = model.createResource(BASE_NS + "agent/newsprov-pipeline");
+    agent.addProperty(RDF.type, model.createResource(PROV_NS + "Agent"));
+    agent.addProperty(model.createProperty(SCHEMA_NS, "name"),
+        "NewsProvenience Pipeline");
+
+    activity.addProperty(model.createProperty(PROV_NS, "wasAssociatedWith"), agent);
+
+    // Timestamp
+    activity.addProperty(
+        model.createProperty(PROV_NS, "endedAtTime"),
+        model.createTypedLiteral(
+            article.getCreatedAt().toString(),
+            XSDDatatype.XSDdateTime));
+}</code></pre>
+
+                <p>The resulting provenance graph enables queries like:</p>
+                <ul>
+                    <li>What sources were used to create this article?</li>
+                    <li>Who was responsible for the article's creation?</li>
+                    <li>When was the article ingested into the system?</li>
+                    <li>What is the complete derivation chain of this content?</li>
+                </ul>
+            </section>
+
+            <section id="multimedia-rdf">
+                <h3>4.4 Multimedia Content Modeling</h3>
+                <p>
+                    Multimedia content is modeled using Schema.org MediaObject hierarchy:
+                </p>
+                <pre><code>private void addMediaObject(Model model, Resource articleResource, Article article) {
+    String mediaUri = article.getUri() + "/media";
+    Resource mediaResource = model.createResource(mediaUri);
+
+    switch (article.getMediaType()) {
+        case PODCAST:
+            mediaResource.addProperty(RDF.type,
+                model.createResource(SCHEMA_NS + "AudioObject"));
+            mediaResource.addProperty(
+                model.createProperty(SCHEMA_NS, "encodingFormat"), "audio/mpeg");
+            break;
+        case DOCUMENTARY:
+            mediaResource.addProperty(RDF.type,
+                model.createResource(SCHEMA_NS + "VideoObject"));
+            mediaResource.addProperty(
+                model.createProperty(SCHEMA_NS, "encodingFormat"), "video/mp4");
+            break;
+        default:
+            if (article.getThumbnailUrl() != null) {
+                mediaResource.addProperty(RDF.type,
+                    model.createResource(SCHEMA_NS + "ImageObject"));
+            }
+    }
+
+    if (article.getThumbnailUrl() != null) {
+        mediaResource.addProperty(
+            model.createProperty(SCHEMA_NS, "contentUrl"),
+            model.createResource(article.getThumbnailUrl()));
+    }
+
+    articleResource.addProperty(
+        model.createProperty(SCHEMA_NS, "associatedMedia"), mediaResource);
+}</code></pre>
+            </section>
+
+            <section id="jsonld-export">
+                <h3>4.5 JSON-LD Serialization</h3>
+                <p>
+                    Articles can be exported as JSON-LD for web embedding and SEO:
+                </p>
+                <pre><code>public String exportToJsonLD(Article article) {
+    Model model = convertArticleToRDF(article);
+
+    StringWriter writer = new StringWriter();
+    RDFDataMgr.write(writer, model, RDFFormat.JSONLD_PRETTY);
+
+    return writer.toString();
+}</code></pre>
+
+                <p>Example JSON-LD output:</p>
+                <pre><code>{
+  "@context": {
+    "schema": "http://schema.org/",
+    "prov": "http://www.w3.org/ns/prov#",
+    "dc": "http://purl.org/dc/elements/1.1/"
+  },
+  "@id": "http://example.org/news/article/ai-revolution-2024",
+  "@type": ["schema:NewsArticle", "schema:CreativeWork"],
+  "schema:headline": {
+    "@value": "AI Revolution in 2024",
+    "@language": "en"
+  },
+  "schema:datePublished": {
+    "@value": "2024-12-10T08:00:00",
+    "@type": "xsd:dateTime"
+  },
+  "schema:wordCount": 3500,
+  "schema:inLanguage": "en",
+  "schema:author": {
+    "@id": "http://example.org/news/author/john-smith",
+    "@type": "schema:Person",
+    "schema:name": "John Smith"
+  },
+  "prov:wasAttributedTo": {
+    "@id": "http://example.org/news/author/john-smith"
+  },
+  "schema:about": [
+    {
+      "@id": "http://example.org/news/topic/artificial-intelligence",
+      "@type": "skos:Concept",
+      "skos:prefLabel": "Artificial Intelligence"
+    }
+  ]
+}</code></pre>
+            </section>
+
+            <section id="skos-taxonomy">
+                <h3>4.6 SKOS Topic Taxonomy</h3>
+                <p>
+                    Topics are organized as a SKOS concept scheme, enabling hierarchical subject classification:
+                </p>
+                <pre><code>// Create concept scheme
+Resource scheme = model.createResource(BASE_NS + "topics");
+scheme.addProperty(RDF.type, model.createResource(SKOS_NS + "ConceptScheme"));
+scheme.addProperty(model.createProperty(SKOS_NS, "prefLabel"),
+    "NewsProvenience Topic Taxonomy");
+
+// Link concept to scheme
+Resource concept = model.createResource(topic.getUri());
+concept.addProperty(RDF.type, model.createResource(SKOS_NS + "Concept"));
+concept.addProperty(model.createProperty(SKOS_NS, "inScheme"), scheme);
+concept.addProperty(model.createProperty(SKOS_NS, "prefLabel"),
+    model.createLiteral(topic.getName(), "en"));
+
+// External linking via exactMatch
+if (topic.getDbpediaUri() != null) {
+    concept.addProperty(model.createProperty(SKOS_NS, "exactMatch"),
+        model.createResource(topic.getDbpediaUri()));
+}</code></pre>
+            </section>
+        </section>
+
+        <section id="external-sources">
+            <h2>5. External Data Sources and Linked Data</h2>
+
+            <section id="dbpedia-integration">
+                <h3>5.1 DBpedia Integration</h3>
+                <p>
+                    NewsProvenience enriches articles by querying DBpedia's SPARQL endpoint to discover
+                    related entities:
+                </p>
+                <pre><code>@Service
+public class EnrichmentService {
+
+    private static final String DBPEDIA_ENDPOINT = "https://dbpedia.org/sparql";
+
+    public List&lt;String&gt; queryDBpedia(String keyword) {
+        String query = String.format("""
+            PREFIX rdfs: &lt;http://www.w3.org/2000/01/rdf-schema#&gt;
+            PREFIX dbo: &lt;http://dbpedia.org/ontology/&gt;
+
+            SELECT DISTINCT ?resource ?label WHERE {
+                ?resource rdfs:label ?label .
+                FILTER(LANG(?label) = 'en')
+                FILTER(CONTAINS(LCASE(?label), LCASE('%s')))
+            }
+            LIMIT 5
+            """, keyword);
+
+        return executeRemoteQuery(DBPEDIA_ENDPOINT, query);
+    }
+}</code></pre>
+
+                <p>The enrichment process extracts keyphrases from article titles and discovers:</p>
+                <ul>
+                    <li>Related DBpedia resources (places, people, organizations)</li>
+                    <li>Abstract descriptions from DBpedia</li>
+                    <li>Category classifications</li>
+                    <li>External links (Wikipedia, official sites)</li>
+                </ul>
+            </section>
+
+            <section id="wikidata-integration">
+                <h3>5.2 Wikidata Integration</h3>
+                <p>
+                    Wikidata provides structured knowledge graph data through its SPARQL endpoint:
+                </p>
+                <pre><code>private static final String WIKIDATA_ENDPOINT = "https://query.wikidata.org/sparql";
+
+public List&lt;String&gt; queryWikidata(String keyword) {
+    String query = String.format("""
+        SELECT ?item ?itemLabel WHERE {
+            SERVICE wikibase:mwapi {
+                bd:serviceParam wikibase:api "EntitySearch" .
+                bd:serviceParam wikibase:endpoint "www.wikidata.org" .
+                bd:serviceParam mwapi:search "%s" .
+                bd:serviceParam mwapi:language "en" .
+                ?item wikibase:apiOutputItem mwapi:item .
+            }
+            SERVICE wikibase:label {
+                bd:serviceParam wikibase:language "en" .
+            }
+        }
+        LIMIT 5
+        """, keyword);
+
+    return executeRemoteQuery(WIKIDATA_ENDPOINT, query);
+}</code></pre>
+
+                <p>Wikidata enrichment provides:</p>
+                <ul>
+                    <li>Stable entity identifiers (Q-numbers)</li>
+                    <li>Multilingual labels and descriptions</li>
+                    <li>Structured properties (birth dates, locations, affiliations)</li>
+                    <li>Links to external databases</li>
+                </ul>
+            </section>
+
+            <section id="enrichment-pipeline">
+                <h3>5.3 Automatic Enrichment Pipeline</h3>
+                <p>
+                    When an article is created, the enrichment pipeline automatically queries external sources:
+                </p>
+                <pre><code>@Service
+public class ArticleService {
+
+    @Transactional
+    public Article createArticle(ArticleDTO dto) {
+        // 1. Create article entity
+        Article article = articleMapper.toEntity(dto);
+        article.setUri(generateUri(dto.getTitle()));
+
+        // 2. Save to relational database
+        article = articleRepository.save(article);
+
+        // 3. Convert to RDF
+        Model rdfModel = rdfService.convertArticleToRDF(article);
+
+        // 4. Enrich with external sources
+        try {
+            String keyphrase = extractKeyphrase(article.getTitle());
+
+            // Query DBpedia
+            List&lt;String&gt; dbpediaUris = enrichmentService.queryDBpedia(keyphrase);
+            for (String uri : dbpediaUris) {
+                rdfModel.add(
+                    rdfModel.createResource(article.getUri()),
+                    rdfModel.createProperty(SCHEMA_NS, "about"),
+                    rdfModel.createResource(uri));
+            }
+
+            // Query Wikidata
+            List&lt;String&gt; wikidataUris = enrichmentService.queryWikidata(keyphrase);
+            for (String uri : wikidataUris) {
+                rdfModel.add(
+                    rdfModel.createResource(article.getUri()),
+                    rdfModel.createProperty(SCHEMA_NS, "about"),
+                    rdfModel.createResource(uri));
+            }
+        } catch (Exception e) {
+            log.warn("Enrichment failed: {}", e.getMessage());
+        }
+
+        // 5. Store in Fuseki
+        sparqlService.storeGraph(article.getUri(), rdfModel);
+
+        return article;
+    }
+}</code></pre>
+            </section>
+
+            <section id="sparql-queries">
+                <h3>5.4 Non-Trivial SPARQL Queries</h3>
+
+                <h4>5.4.1 Fresh Editorials by Topic</h4>
+                <pre><code>PREFIX schema: &lt;http://schema.org/&gt;
+PREFIX xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+
+SELECT ?article ?title ?description ?date ?author WHERE {
+    ?article a schema:NewsArticle ;
+             schema:headline ?title ;
+             schema:datePublished ?date ;
+             schema:about ?topic .
+
+    ?topic skos:prefLabel ?topicLabel .
+    FILTER(CONTAINS(LCASE(?topicLabel), LCASE("technology")))
+
+    OPTIONAL { ?article schema:description ?description }
+    OPTIONAL {
+        ?article schema:author ?authorRes .
+        ?authorRes schema:name ?author .
+    }
+
+    FILTER(?date >= "2024-12-01T00:00:00"^^xsd:dateTime)
+}
+ORDER BY DESC(?date)
+LIMIT 20</code></pre>
+
+                <h4>5.4.2 Articles by Language and Word Count</h4>
+                <pre><code>PREFIX schema: &lt;http://schema.org/&gt;
+
+SELECT ?article ?title ?language ?wordCount ?topic WHERE {
+    ?article a schema:NewsArticle ;
+             schema:headline ?title ;
+             schema:inLanguage ?language ;
+             schema:wordCount ?wordCount .
+
+    FILTER(?language IN ("en", "es"))
+    FILTER(?wordCount &lt; 4000)
+
+    OPTIONAL {
+        ?article schema:about ?topicRes .
+        ?topicRes skos:prefLabel ?topic .
+    }
+
+    FILTER(CONTAINS(LCASE(?topic), "it contest") ||
+           CONTAINS(LCASE(?topic), "programming"))
+}
+ORDER BY ?wordCount</code></pre>
+
+                <h4>5.4.3 Romanian Journalist Investigations</h4>
+                <pre><code>PREFIX schema: &lt;http://schema.org/&gt;
+PREFIX prov: &lt;http://www.w3.org/ns/prov#&gt;
+
+SELECT ?title ?description ?authorName ?publishDate WHERE {
+    ?article a schema:NewsArticle ;
+             schema:headline ?title ;
+             schema:genre ?genre ;
+             prov:wasAttributedTo ?author .
+
+    ?author schema:name ?authorName ;
+            schema:nationality "Romanian" .
+
+    FILTER(?genre IN ("investigation", "documentary"))
+
+    OPTIONAL { ?article schema:description ?description }
+    OPTIONAL { ?article schema:datePublished ?publishDate }
+}
+ORDER BY DESC(?publishDate)</code></pre>
+
+                <h4>5.4.4 Cross-Database Federated Query</h4>
+                <pre><code>PREFIX schema: &lt;http://schema.org/&gt;
+PREFIX dbo: &lt;http://dbpedia.org/ontology/&gt;
+PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;
+
+SELECT ?article ?title ?dbpediaAbstract WHERE {
+    ?article a schema:NewsArticle ;
+             schema:headline ?title ;
+             schema:about ?topic .
+
+    ?topic skos:exactMatch ?dbpediaResource .
+
+    SERVICE &lt;https://dbpedia.org/sparql&gt; {
+        ?dbpediaResource dbo:abstract ?dbpediaAbstract .
+        FILTER(LANG(?dbpediaAbstract) = "en")
+    }
+}
+LIMIT 10</code></pre>
+            </section>
+
+            <section id="linked-data-principles">
+                <h3>5.5 Linked Data Principles Conformance</h3>
+                <p>
+                    NewsProvenience adheres to Tim Berners-Lee's four Linked Data principles:
+                </p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Principle</th>
+                            <th>Implementation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>1. Use URIs as names for things</strong></td>
+                            <td>
+                                Every article, author, and topic has a unique HTTP URI:<br>
+                                <code>http://example.org/news/article/{slug}</code><br>
+                                <code>http://example.org/news/author/{id}</code><br>
+                                <code>http://example.org/news/topic/{name}</code>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>2. Use HTTP URIs so people can look up those names</strong></td>
+                            <td>
+                                URIs are dereferenceable via the REST API:<br>
+                                <code>GET /api/articles/{id}</code> returns article data<br>
+                                <code>GET /api/articles/{id}/export/jsonld</code> returns RDF
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>3. Provide useful information using standards (RDF, SPARQL)</strong></td>
+                            <td>
+                                - RDF/XML and JSON-LD serialization<br>
+                                - SPARQL endpoint for queries<br>
+                                - Schema.org, Dublin Core, PROV-O vocabularies
+                            </td>
+                        </tr>
+                        <tr>
+                            <td><strong>4. Include links to other URIs to discover more things</strong></td>
+                            <td>
+                                - <code>skos:exactMatch</code> links to DBpedia<br>
+                                - <code>schema:about</code> links to Wikidata entities<br>
+                                - <code>prov:wasAttributedTo</code> links to author URIs<br>
+                                - <code>dc:source</code> links to original sources
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h4>5.5.1 Five-Star Linked Data Rating</h4>
+                <p>NewsProvenience achieves a <strong>4-star rating</strong>:</p>
+                <ul>
+                    <li>Data available on the Web with open license</li>
+                    <li>Available as machine-readable structured data</li>
+                    <li>Available in non-proprietary format (RDF)</li>
+                    <li>Uses URIs to denote things</li>
+                    <li>Links to external data sources (DBpedia, Wikidata)</li>
+                </ul>
+            </section>
+        </section>
+
+        <section id="frontend">
+            <h2>6. Frontend Architecture</h2>
+
+            <section id="react-architecture">
+                <h3>6.1 React Component Architecture</h3>
+                <p>
+                    The frontend is built with React 19 using functional components and hooks:
+                </p>
+                <pre><code>// Component hierarchy
+App
+├── Layout
+│   ├── Header
+│   └── Navigation
+├── Routes
+│   ├── HomePage
+│   ├── SearchPage
+│   │   ├── SearchForm
+│   │   └── FilterPanel
+│   ├── ResultsPage
+│   │   └── ArticleCard[]
+│   └── ArticlePage
+│       ├── OverviewTab (RDFa markup)
+│       ├── ProvenanceTab (PROV-O display)
+│       ├── RecommendationsTab
+│       └── GraphTab (Cytoscape visualization)</code></pre>
+            </section>
+
+            <section id="rdfa-markup">
+                <h3>6.2 RDFa Markup in HTML</h3>
+                <p>
+                    The ArticlePage component embeds RDFa markup for semantic web crawlers:
+                </p>
+                <pre><code>&lt;article
+    vocab="http://schema.org/"
+    typeof="NewsArticle CreativeWork"
+    resource={article.uri}
+&gt;
+    &lt;h1 property="headline"&gt;{article.title}&lt;/h1&gt;
+
+    &lt;div property="author" typeof="Person"&gt;
+        &lt;span property="name"&gt;{article.authorName}&lt;/span&gt;
+    &lt;/div&gt;
+
+    &lt;time property="datePublished" dateTime={article.publishedDate}&gt;
+        {formatDate(article.publishedDate)}
+    &lt;/time&gt;
+
+    &lt;span property="inLanguage"&gt;{article.language}&lt;/span&gt;
+    &lt;span property="wordCount"&gt;{article.wordCount}&lt;/span&gt;
+
+    &lt;div property="articleBody"&gt;{article.content}&lt;/div&gt;
+
+    &lt;section&gt;
+        &lt;h2&gt;Topics&lt;/h2&gt;
+        {article.topics.map(topic =&gt; (
+            &lt;span property="about" typeof="skos:Concept" resource={topic.uri}&gt;
+                &lt;span property="skos:prefLabel"&gt;{topic.name}&lt;/span&gt;
+            &lt;/span&gt;
+        ))}
+    &lt;/section&gt;
+&lt;/article&gt;</code></pre>
+            </section>
+
+            <section id="graph-visualization">
+                <h3>6.3 RDF Graph Visualization</h3>
+                <p>
+                    Cytoscape.js renders the article's RDF neighborhood as an interactive graph:
+                </p>
+                <pre><code>const GraphVisualization = ({ articleUri }) => {
+    const [elements, setElements] = useState([]);
+
+    useEffect(() => {
+        // Fetch triples from SPARQL
+        const query = `
+            SELECT ?s ?p ?o WHERE {
+                { &lt;${articleUri}&gt; ?p ?o }
+                UNION
+                { ?s ?p &lt;${articleUri}&gt; }
+            }
+            LIMIT 100
+        `;
+
+        fetchSPARQL(query).then(results => {
+            const nodes = new Set();
+            const edges = [];
+
+            results.forEach(({ s, p, o }) => {
+                nodes.add(s.value);
+                nodes.add(o.value);
+                edges.push({
+                    data: {
+                        source: s.value,
+                        target: o.value,
+                        label: shortenUri(p.value)
+                    }
+                });
+            });
+
+            setElements([
+                ...Array.from(nodes).map(id => ({ data: { id, label: shortenUri(id) } })),
+                ...edges
+            ]);
+        });
+    }, [articleUri]);
+
+    return (
+        &lt;CytoscapeComponent
+            elements={elements}
+            layout={{ name: 'cose' }}
+            style={{ width: '100%', height: '600px' }}
+            stylesheet={graphStyles}
+        /&gt;
+    );
+};</code></pre>
+            </section>
+
+            <section id="recommendations">
+                <h3>6.4 Content-Based Recommendations</h3>
+                <p>
+                    The recommendations system uses SPARQL to find articles sharing topics:
+                </p>
+                <pre><code>const fetchRecommendations = async (articleUri, topics) => {
+    const topicFilters = topics
+        .map(t => `?topic = &lt;${t.uri}&gt;`)
+        .join(' || ');
+
+    const query = `
+        PREFIX schema: &lt;http://schema.org/&gt;
+
+        SELECT ?article ?title (COUNT(?topic) as ?score) WHERE {
+            ?article a schema:NewsArticle ;
+                     schema:headline ?title ;
+                     schema:about ?topic .
+
+            FILTER(${topicFilters})
+            FILTER(?article != &lt;${articleUri}&gt;)
+        }
+        GROUP BY ?article ?title
+        ORDER BY DESC(?score)
+        LIMIT 5
+    `;
+
+    return fetchSPARQL(query);
+};</code></pre>
+            </section>
+        </section>
+
+        <section id="deployment">
+            <h2>7. Deployment and Infrastructure</h2>
+
+            <section id="docker">
+                <h3>7.1 Docker Configuration</h3>
+                <pre><code>version: '3.8'
+
+services:
+  fuseki:
+    image: stain/jena-fuseki
+    ports:
+      - "3030:3030"
+    environment:
+      - ADMIN_PASSWORD=admin
+      - JVM_ARGS=-Xmx2g
+    volumes:
+      - fuseki-data:/fuseki
+
+  backend:
+    build: ./backend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - fuseki
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - FUSEKI_URL=http://fuseki:3030
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+volumes:
+  fuseki-data:</code></pre>
+            </section>
+
+            <section id="configuration">
+                <h3>7.2 Application Configuration</h3>
+                <pre><code># application.yml
+spring:
+  datasource:
+    url: jdbc:h2:mem:newsdb
+    driver-class-name: org.h2.Driver
+
+rdf:
+  fuseki:
+    url: http://localhost:3030
+    dataset: news
+  namespaces:
+    base: http://example.org/news/
+    schema: http://schema.org/
+    dc: http://purl.org/dc/elements/1.1/
+    prov: http://www.w3.org/ns/prov#
+    skos: http://www.w3.org/2004/02/skos/core#
+
+enrichment:
+  dbpedia:
+    endpoint: https://dbpedia.org/sparql
+    timeout: 5000
+  wikidata:
+    endpoint: https://query.wikidata.org/sparql
+    timeout: 5000</code></pre>
+            </section>
+        </section>
+
+        <section id="conclusion">
+            <h2>8. Conclusion</h2>
+            <p>
+                NewsProvenience successfully implements a comprehensive semantic web platform for newspaper article
+                provenance management. The system demonstrates:
+            </p>
+            <ul>
+                <li><strong>Robust data modeling</strong> with dual relational/graph storage</li>
+                <li><strong>Standards compliance</strong> using Schema.org, Dublin Core, PROV-O, and SKOS</li>
+                <li><strong>Semantic web capabilities</strong> via SPARQL endpoint and RDF serialization</li>
+                <li><strong>External integration</strong> with DBpedia and Wikidata knowledge bases</li>
+                <li><strong>Rich user interface</strong> with search, visualization, and recommendations</li>
+                <li><strong>Linked Data principles</strong> adherence for web-scale interoperability</li>
+            </ul>
+            <p>
+                The platform serves as a foundation for trustworthy journalism by providing transparent
+                provenance tracking and enabling sophisticated knowledge queries across article collections.
+            </p>
+        </section>
+
+        <section id="references">
+            <h2>References</h2>
+            <ol>
+                <li>Apache Jena. (2024). Apache Jena Documentation.
+                    <a href="https://jena.apache.org/documentation/">https://jena.apache.org/documentation/</a></li>
+                <li>DBpedia Association. DBpedia SPARQL Endpoint.
+                    <a href="https://dbpedia.org/sparql">https://dbpedia.org/sparql</a></li>
+                <li>Wikidata. Wikidata Query Service.
+                    <a href="https://query.wikidata.org/">https://query.wikidata.org/</a></li>
+            </ol>
+        </section>
+    </article>
+
+    <footer>
+        <p>NewsProvenience Technical Report - WADE Project 2026</p>
+    </footer>
+</body>
+</html>

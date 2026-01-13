@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NewsProvenience - User Guide</title>
+    <link rel="stylesheet" href="https://w3c.github.io/scholarly-html/css/scholarly.min.css">
+    <style>
+        :root {
+            --accent-color: #1a73e8;
+        }
+        code {
+            background-color: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Consolas', 'Monaco', monospace;
+        }
+        pre {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 4px;
+            padding: 16px;
+            overflow-x: auto;
+        }
+        pre code {
+            background: none;
+            padding: 0;
+        }
+        .screenshot {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin: 1.5em 0;
+            max-width: 100%;
+        }
+        .screenshot-placeholder {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
+            border-radius: 8px;
+            margin: 1.5em 0;
+        }
+        .screenshot-placeholder h4 {
+            margin: 0 0 10px 0;
+            font-size: 1.2em;
+        }
+        .screenshot-placeholder p {
+            margin: 0;
+            opacity: 0.9;
+            font-size: 0.9em;
+        }
+        figure {
+            margin: 2em 0;
+            text-align: center;
+        }
+        figcaption {
+            font-style: italic;
+            color: #666;
+            margin-top: 0.5em;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1em 0;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f5f5f5;
+        }
+        .step-box {
+            background-color: #e3f2fd;
+            border-left: 4px solid #1a73e8;
+            padding: 1em 1.5em;
+            margin: 1em 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .step-number {
+            display: inline-block;
+            background-color: #1a73e8;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .tip-box {
+            background-color: #fff3e0;
+            border-left: 4px solid #ff9800;
+            padding: 1em 1.5em;
+            margin: 1em 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .warning-box {
+            background-color: #ffebee;
+            border-left: 4px solid #f44336;
+            padding: 1em 1.5em;
+            margin: 1em 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .success-box {
+            background-color: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            padding: 1em 1.5em;
+            margin: 1em 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .case-study {
+            background-color: #fafafa;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 2em;
+            margin: 2em 0;
+        }
+        .case-study h4 {
+            color: #1a73e8;
+            margin-top: 0;
+        }
+        .feature-pill {
+            display: inline-block;
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            padding: 4px 12px;
+            border-radius: 16px;
+            font-size: 0.85em;
+            margin: 2px;
+        }
+    </style>
+</head>
+<body prefix="schema: http://schema.org/ xsd: http://www.w3.org/2001/XMLSchema# sa: https://ns.science.ai/">
+    <header>
+        <h1>NewsProvenience</h1>
+        <h2>User Guide: Managing Newspaper Article Provenance</h2>
+    </header>
+
+    <article typeof="schema:ScholarlyArticle" resource="#">
+        <section typeof="sa:AuthorsList">
+            <h2>Authors</h2>
+            <ul>
+                <li typeof="sa:ContributorRole" property="schema:author">
+                    <span typeof="schema:Person" resource="https://github.com/razcro/wade-wep">
+                        <span property="schema:name">Team rc-af</span>
+                    </span>
+                    <ul>
+                        <li property="schema:affiliation" typeof="schema:Organization">
+                            <span property="schema:name">Faculty of Computer Science, UAIC Iasi</span>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </section>
+
+        <section typeof="sa:Abstract" id="abstract">
+            <h2>Abstract</h2>
+            <p>
+                This user guide provides comprehensive instructions for using the NewsProvenience platform,
+                a semantic web application for managing newspaper article provenance. The guide covers
+                basic navigation, search functionality, article management, SPARQL queries, and visualization
+                features. Three detailed case studies demonstrate real-world usage scenarios including
+                finding fresh editorials, filtering articles by language and word count, and discovering
+                investigative journalism content.
+            </p>
+        </section>
+
+        <section id="introduction">
+            <h2>1. Introduction</h2>
+
+            <section id="overview">
+                <h3>1.1 What is NewsProvenience?</h3>
+                <p>
+                    NewsProvenience is a web-based platform designed to help journalists, researchers, and
+                    media professionals manage and query knowledge about newspaper articles and their provenance.
+                    The system provides:
+                </p>
+                <ul>
+                    <li><span class="feature-pill">Semantic Search</span> - Find articles using SPARQL-powered queries</li>
+                    <li><span class="feature-pill">Provenance Tracking</span> - Trace article origins and sources</li>
+                    <li><span class="feature-pill">Multi-language Support</span> - Filter by language (EN, RO, ES, etc.)</li>
+                    <li><span class="feature-pill">Multimedia Content</span> - Manage articles, podcasts, documentaries</li>
+                    <li><span class="feature-pill">Graph Visualization</span> - Explore RDF relationships visually</li>
+                    <li><span class="feature-pill">Recommendations</span> - Discover related content automatically</li>
+                </ul>
+            </section>
+
+            <section id="requirements">
+                <h3>1.2 System Requirements</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Component</th>
+                            <th>Requirement</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Web Browser</td>
+                            <td>Chrome 90+, Firefox 88+, Safari 14+, Edge 90+</td>
+                        </tr>
+                        <tr>
+                            <td>Screen Resolution</td>
+                            <td>Minimum 1280x720 (1920x1080 recommended)</td>
+                        </tr>
+                        <tr>
+                            <td>JavaScript</td>
+                            <td>Enabled</td>
+                        </tr>
+                        <tr>
+                            <td>Network</td>
+                            <td>Stable internet connection</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section id="getting-started">
+                <h3>1.3 Getting Started</h3>
+                <div class="step-box">
+                    <p><span class="step-number">1</span><strong>Access the Application</strong></p>
+                    <p>Open your web browser and navigate to <code>http://localhost:5173</code> (development).</p>
+                </div>
+                <div class="step-box">
+                    <p><span class="step-number">2</span><strong>Explore the Home Page</strong></p>
+                    <p>The home page displays featured articles, recent additions, and quick access to search functionality.</p>
+                </div>
+                <div class="step-box">
+                    <p><span class="step-number">3</span><strong>Start Searching</strong></p>
+                    <p>Use the search bar or navigate to the Search page for advanced filtering options.</p>
+                </div>
+            </section>
+        </section>
+
+        <section id="interface">
+            <h2>2. User Interface Overview</h2>
+
+            <section id="search-page">
+                <h3>2.1 Search Page</h3>
+                <figure>
+                    <img src="screenshots/01-home-page.png" alt="Search Page - Advanced search interface with filters for language, media type, word count, and date range" class="screenshot">
+                    <figcaption>Figure 1: Advanced Search Page with semantic filtering options</figcaption>
+                </figure>
+
+                <h4>2.1.1 Search Filters</h4>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Filter</th>
+                            <th>Description</th>
+                            <th>Example Values</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Query</td>
+                            <td>Keyword search in title and content</td>
+                            <td>"artificial intelligence", "climate change"</td>
+                        </tr>
+                        <tr>
+                            <td>Language</td>
+                            <td>Filter by article language</td>
+                            <td>en, ro, es, fr, de</td>
+                        </tr>
+                        <tr>
+                            <td>Media Type</td>
+                            <td>Content format</td>
+                            <td>Article, Documentary, Podcast, Investigation</td>
+                        </tr>
+                        <tr>
+                            <td>Max Words</td>
+                            <td>Upper limit on word count</td>
+                            <td>1000, 2000, 4000, 10000</td>
+                        </tr>
+                        <tr>
+                            <td>Date From/To</td>
+                            <td>Publication date range</td>
+                            <td>2024-01-01 to 2024-12-31</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="tip-box">
+                    <strong>Tip:</strong> Use the "SPARQL Search" toggle to execute semantic queries against the
+                    RDF knowledge graph instead of the relational database. This enables more sophisticated
+                    filtering based on linked data relationships.
+                </div>
+            </section>
+
+            <section id="results-page">
+                <h3>2.2 Results Page</h3>
+                <figure>
+                    <img src="screenshots/02-search-results.png" alt="Search Results - Grid view of articles matching search criteria with metadata summaries" class="screenshot">
+                    <figcaption>Figure 2: Search Results displaying matched articles with key metadata</figcaption>
+                </figure>
+                <p>Each result card displays:</p>
+                <ul>
+                    <li>Article title (clickable link to detail page)</li>
+                    <li>Author name and publication date</li>
+                    <li>Language badge and word count</li>
+                    <li>Media type indicator (article, podcast, documentary)</li>
+                    <li>Truncated description/summary</li>
+                </ul>
+            </section>
+
+            <section id="article-page">
+                <h3>2.3 Article Detail Page</h3>
+                <figure>
+                    <img src="screenshots/03-article-detail.png" alt="Article Detail View - Full article view with tabs for Overview, Provenance, Recommendations, and Graph" class="screenshot">
+                    <figcaption>Figure 3: Article Detail Page with tabbed content sections</figcaption>
+                </figure>
+
+                <h4>2.3.1 Overview Tab</h4>
+                <p>Displays the complete article with semantic RDFa markup:</p>
+                <ul>
+                    <li>Full article headline and body text</li>
+                    <li>Author information with links to author profile</li>
+                    <li>Topic tags (SKOS concepts)</li>
+                    <li>Associated media (images, audio player, video player)</li>
+                    <li>Source URLs for provenance verification</li>
+                    <li>QR code for sharing the article's semantic URI</li>
+                </ul>
+
+                <h4>2.3.2 Provenance Tab</h4>
+                <p>The Provenance tab shows:</p>
+                <ul>
+                    <li><strong>Activity</strong> - The ingestion process that created the article</li>
+                    <li><strong>Agent</strong> - System or person responsible for the ingestion</li>
+                    <li><strong>Sources Used</strong> - Original URLs and documents referenced</li>
+                    <li><strong>Attribution</strong> - Link to the article author</li>
+                    <li><strong>Timestamps</strong> - When the article was processed</li>
+                </ul>
+
+                <h4>2.3.3 Recommendations Tab</h4>
+                <p>
+                    The recommendations are generated by a SPARQL query that finds articles sharing
+                    the same <code>schema:about</code> topics. Articles are ranked by the number of
+                    shared topics.
+                </p>
+
+                <h4>2.3.4 Graph Tab</h4>
+                <p>The graph visualization shows:</p>
+                <ul>
+                    <li><strong>Nodes</strong> - The article, author, topics, and linked resources</li>
+                    <li><strong>Edges</strong> - RDF predicates (schema:author, schema:about, prov:wasAttributedTo)</li>
+                    <li><strong>Interactive Features</strong> - Zoom, pan, node selection, and highlighting</li>
+                </ul>
+
+                <div class="tip-box">
+                    <strong>Tip:</strong> Click on nodes in the graph to see their URIs. Double-click to
+                    expand the neighborhood and discover more related entities.
+                </div>
+            </section>
+        </section>
+
+        <section id="sparql-interface">
+            <h2>3. SPARQL Query Interface</h2>
+
+            <section id="sparql-basics">
+                <h3>3.1 Using the SPARQL Endpoint</h3>
+                <p>The SPARQL interface allows you to write custom queries against the knowledge graph:</p>
+
+                <div class="step-box">
+                    <p><span class="step-number">1</span><strong>Navigate to SPARQL</strong></p>
+                    <p>Click "SPARQL" in the navigation bar or go to <code>/sparql</code></p>
+                </div>
+                <div class="step-box">
+                    <p><span class="step-number">2</span><strong>Write Your Query</strong></p>
+                    <p>Enter a valid SPARQL SELECT, CONSTRUCT, or ASK query in the editor</p>
+                </div>
+                <div class="step-box">
+                    <p><span class="step-number">3</span><strong>Choose Output Format</strong></p>
+                    <p>Select JSON, XML, or CSV for the result format</p>
+                </div>
+                <div class="step-box">
+                    <p><span class="step-number">4</span><strong>Execute</strong></p>
+                    <p>Click "Run Query" to execute and view results</p>
+                </div>
+            </section>
+
+            <section id="predefined-queries">
+                <h3>3.2 Predefined Query Examples</h3>
+                <p>NewsProvenience provides pre-built queries accessible via the API:</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Query Name</th>
+                            <th>API Endpoint</th>
+                            <th>Parameters</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Fresh Editorials</td>
+                            <td><code>/api/sparql/examples/fresh-editorials</code></td>
+                            <td>topic, dateFrom</td>
+                        </tr>
+                        <tr>
+                            <td>Articles by Language</td>
+                            <td><code>/api/sparql/examples/articles-by-language</code></td>
+                            <td>lang1, lang2, maxWords, topic</td>
+                        </tr>
+                        <tr>
+                            <td>Romanian Investigations</td>
+                            <td><code>/api/sparql/examples/romanian-investigations</code></td>
+                            <td>None</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section id="sparql-examples">
+                <h3>3.3 Example Queries</h3>
+
+                <h4>3.3.1 Find All Articles by a Specific Author</h4>
+                <pre><code>PREFIX schema: &lt;http://schema.org/&gt;
+
+SELECT ?title ?date WHERE {
+    ?article a schema:NewsArticle ;
+             schema:headline ?title ;
+             schema:author ?author ;
+             schema:datePublished ?date .
+
+    ?author schema:name "John Smith" .
+}
+ORDER BY DESC(?date)</code></pre>
+
+                <h4>3.3.2 Count Articles by Topic</h4>
+                <pre><code>PREFIX schema: &lt;http://schema.org/&gt;
+PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;
+
+SELECT ?topicName (COUNT(?article) as ?count) WHERE {
+    ?article a schema:NewsArticle ;
+             schema:about ?topic .
+
+    ?topic skos:prefLabel ?topicName .
+}
+GROUP BY ?topicName
+ORDER BY DESC(?count)</code></pre>
+
+                <h4>3.3.3 Find Articles with DBpedia Links</h4>
+                <pre><code>PREFIX schema: &lt;http://schema.org/&gt;
+PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;
+
+SELECT ?title ?dbpediaUri WHERE {
+    ?article a schema:NewsArticle ;
+             schema:headline ?title ;
+             schema:about ?topic .
+
+    ?topic skos:exactMatch ?dbpediaUri .
+    FILTER(STRSTARTS(STR(?dbpediaUri), "http://dbpedia.org"))
+}</code></pre>
+            </section>
+        </section>
+
+        <section id="case-studies">
+            <h2>4. Case Studies</h2>
+
+            <div class="case-study" id="case-study-1">
+                <h3>Case Study 1: Finding Fresh Editorials on Technology</h3>
+                <h4>Scenario</h4>
+                <p>
+                    Maria is a technology journalist who wants to find all recently published editorials
+                    about technology topics from the last month. She needs articles that are current and
+                    relevant to her upcoming news roundup.
+                </p>
+
+                <h4>Step-by-Step Solution</h4>
+
+                <div class="step-box">
+                    <p><span class="step-number">1</span><strong>Navigate to the Search Page</strong></p>
+                    <p>Maria clicks "Search" in the navigation bar to access the advanced search interface.</p>
+                </div>
+
+                <div class="step-box">
+                    <p><span class="step-number">2</span><strong>Enter Search Criteria</strong></p>
+                    <p>Maria enters the following filters:</p>
+                    <ul>
+                        <li><strong>Query:</strong> "technology"</li>
+                        <li><strong>Media Type:</strong> Article (Editorial)</li>
+                        <li><strong>Date From:</strong> 2024-12-01</li>
+                    </ul>
+                </div>
+
+                <div class="step-box">
+                    <p><span class="step-number">3</span><strong>Enable SPARQL Search</strong></p>
+                    <p>Maria toggles "Use SPARQL Search" to leverage the semantic query capabilities.</p>
+                </div>
+
+                <div class="step-box">
+                    <p><span class="step-number">4</span><strong>Execute Search</strong></p>
+                    <p>Clicking "Search" executes the following SPARQL query:</p>
+                </div>
+
+                <pre><code>PREFIX schema: &lt;http://schema.org/&gt;
+PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;
+PREFIX xsd: &lt;http://www.w3.org/2001/XMLSchema#&gt;
+
+SELECT ?article ?title ?description ?date ?author WHERE {
+    ?article a schema:NewsArticle ;
+             schema:headline ?title ;
+             schema:datePublished ?date ;
+             schema:about ?topic .
+
+    ?topic skos:prefLabel ?topicLabel .
+    FILTER(CONTAINS(LCASE(?topicLabel), "technology"))
+
+    OPTIONAL { ?article schema:description ?description }
+    OPTIONAL {
+        ?article schema:author ?authorRes .
+        ?authorRes schema:name ?author .
+    }
+
+    FILTER(?date >= "2024-12-01T00:00:00"^^xsd:dateTime)
+}
+ORDER BY DESC(?date)
+LIMIT 20</code></pre>
+
+                <div class="step-box">
+                    <p><span class="step-number">5</span><strong>Review Results</strong></p>
+                    <p>Maria reviews the search results showing recent technology editorials.</p>
+                </div>
+
+                <div class="step-box">
+                    <p><span class="step-number">6</span><strong>Explore Article Details</strong></p>
+                    <p>Maria clicks on an article to view its full content, provenance, and related articles.</p>
+                </div>
+
+                <div class="success-box">
+                    <strong>Result:</strong> Maria found 15 recent technology editorials published in the last month.
+                    She can now use these for her news roundup, with full provenance information available for
+                    fact-checking.
+                </div>
+            </div>
+
+            <div class="case-study" id="case-study-2">
+                <h3>Case Study 2: Articles Under 4000 Words in English or Spanish About IT Contests</h3>
+                <h4>Scenario</h4>
+                <p>
+                    Carlos is a content curator for an international tech magazine. He needs to find concise
+                    articles (under 4000 words) about international IT contests that are available in either
+                    English or Spanish for the magazine's bilingual readership.
+                </p>
+
+                <h4>Step-by-Step Solution</h4>
+
+                <div class="step-box">
+                    <p><span class="step-number">1</span><strong>Use the API Endpoint Directly</strong></p>
+                    <p>Carlos accesses the predefined query endpoint:</p>
+                    <code>GET /api/sparql/examples/articles-by-language?lang1=en&lang2=es&maxWords=4000&topic=IT%20contest</code>
+                </div>
+
+                <div class="step-box">
+                    <p><span class="step-number">2</span><strong>Alternative: Use Search Interface</strong></p>
+                    <p>Carlos can also use the Search page with these filters:</p>
+                    <ul>
+                        <li><strong>Query:</strong> "IT contest" or "programming competition"</li>
+                        <li><strong>Language:</strong> en (first search), es (second search)</li>
+                        <li><strong>Max Words:</strong> 4000</li>
+                    </ul>
+                </div>
+
+                <div class="step-box">
+                    <p><span class="step-number">3</span><strong>SPARQL Query Executed</strong></p>
+                    <p>The system executes:</p>
+                </div>
+
+                <pre><code>PREFIX schema: &lt;http://schema.org/&gt;
+PREFIX skos: &lt;http://www.w3.org/2004/02/skos/core#&gt;
+
+SELECT ?article ?title ?language ?wordCount ?topic WHERE {
+    ?article a schema:NewsArticle ;
+             schema:headline ?title ;
+             schema:inLanguage ?language ;
+             schema:wordCount ?wordCount .
+
+    FILTER(?language IN ("en", "es"))
+    FILTER(?wordCount < 4000)
+
+    OPTIONAL {
+        ?article schema:about ?topicRes .
+        ?topicRes skos:prefLabel ?topic .
+    }
+
+    FILTER(
+        CONTAINS(LCASE(?title), "it contest") ||
+        CONTAINS(LCASE(?title), "programming") ||
+        CONTAINS(LCASE(?topic), "competition")
+    )
+}
+ORDER BY ?language ?wordCount</code></pre>
+
+                <div class="step-box">
+                    <p><span class="step-number">4</span><strong>Review and Export Results</strong></p>
+                    <p>Carlos reviews the bilingual results and exports selected articles.</p>
+                </div>
+
+                <div class="step-box">
+                    <p><span class="step-number">5</span><strong>Export as JSON-LD</strong></p>
+                    <p>Carlos exports selected articles as JSON-LD for integration with the magazine's CMS:</p>
+                    <code>GET /api/articles/{id}/export/jsonld</code>
+                </div>
+
+                <div class="success-box">
+                    <strong>Result:</strong> Carlos found 8 articles meeting his criteria - 5 in English and 3 in Spanish,
+                    all under 4000 words and covering various international IT contests. The word count filter
+                    ensured all articles fit within the magazine's page limits.
+                </div>
+            </div>
+
+            <div class="case-study" id="case-study-3">
+                <h3>Case Study 3: Discovering Investigations and Documentaries by Romanian Journalists</h3>
+                <h4>Scenario</h4>
+                <p>
+                    Elena is a media researcher studying investigative journalism in Eastern Europe. She wants
+                    to compile a list of all investigations and documentaries produced by Romanian journalists
+                    that have been published on the web, including their titles and descriptions.
+                </p>
+
+                <h4>Step-by-Step Solution</h4>
+
+                <div class="step-box">
+                    <p><span class="step-number">1</span><strong>Access the Predefined Query</strong></p>
+                    <p>Elena uses the dedicated endpoint for Romanian investigations:</p>
+                    <code>GET /api/sparql/examples/romanian-investigations</code>
+                </div>
+
+                <div class="step-box">
+                    <p><span class="step-number">2</span><strong>Understand the Query</strong></p>
+                    <p>The endpoint executes this SPARQL query:</p>
+                </div>
+
+                <pre><code>PREFIX schema: &lt;http://schema.org/&gt;
+PREFIX prov: &lt;http://www.w3.org/ns/prov#&gt;
+
+SELECT ?title ?description ?authorName ?publishDate WHERE {
+    ?article a schema:NewsArticle ;
+             schema:headline ?title ;
+             schema:genre ?genre ;
+             prov:wasAttributedTo ?author .
+
+    ?author schema:name ?authorName ;
+            schema:nationality "Romanian" .
+
+    FILTER(?genre IN ("investigation", "documentary"))
+
+    OPTIONAL { ?article schema:description ?description }
+    OPTIONAL { ?article schema:datePublished ?publishDate }
+}
+ORDER BY DESC(?publishDate)</code></pre>
+
+                <div class="step-box">
+                    <p><span class="step-number">3</span><strong>View Results in the Interface</strong></p>
+                    <p>Elena accesses the SPARQL page and runs the query manually to see results in the UI.</p>
+                </div>
+
+                <div class="step-box">
+                    <p><span class="step-number">4</span><strong>Examine Results</strong></p>
+                    <p>The results show investigations and documentaries with their metadata.</p>
+                </div>
+
+                <div class="step-box">
+                    <p><span class="step-number">5</span><strong>Explore Individual Articles</strong></p>
+                    <p>Elena clicks on an investigation to view its full provenance chain.</p>
+                </div>
+
+                <div class="step-box">
+                    <p><span class="step-number">6</span><strong>Visualize the Knowledge Graph</strong></p>
+                    <p>Elena uses the Graph tab to explore relationships between Romanian journalists
+                    and their investigative work.</p>
+                </div>
+
+                <div class="step-box">
+                    <p><span class="step-number">7</span><strong>Export Data for Research</strong></p>
+                    <p>Elena exports the results as CSV for her research database:</p>
+                    <code>POST /api/sparql?format=csv</code>
+                </div>
+
+                <div class="success-box">
+                    <strong>Result:</strong> Elena discovered 12 investigations and 4 documentaries by Romanian journalists.
+                    The provenance information helped her verify the original sources, and the graph visualization
+                    revealed connections between journalists working on similar topics. She exported the data
+                    for further analysis in her research paper.
+                </div>
+            </div>
+        </section>
+
+        <section id="advanced-features">
+            <h2>5. Advanced Features</h2>
+
+            <section id="export-formats">
+                <h3>5.1 Data Export Formats</h3>
+                <p>NewsProvenience supports multiple export formats:</p>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Format</th>
+                            <th>Endpoint</th>
+                            <th>Use Case</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>JSON-LD</td>
+                            <td><code>/api/articles/{id}/export/jsonld</code></td>
+                            <td>Web embedding, SEO, CMS integration</td>
+                        </tr>
+                        <tr>
+                            <td>RDF/XML</td>
+                            <td><code>/api/articles/{id}/export/rdf</code></td>
+                            <td>Triple store import, semantic tools</td>
+                        </tr>
+                        <tr>
+                            <td>SPARQL JSON</td>
+                            <td><code>/api/sparql?format=json</code></td>
+                            <td>JavaScript applications</td>
+                        </tr>
+                        <tr>
+                            <td>SPARQL CSV</td>
+                            <td><code>/api/sparql?format=csv</code></td>
+                            <td>Spreadsheet analysis, research</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section id="rdfa-usage">
+                <h3>5.2 Embedded RDFa Markup</h3>
+                <p>
+                    Every article page contains RDFa markup that can be extracted by semantic web crawlers
+                    and search engines:
+                </p>
+                <pre><code>&lt;article vocab="http://schema.org/" typeof="NewsArticle CreativeWork"&gt;
+    &lt;h1 property="headline"&gt;Article Title&lt;/h1&gt;
+    &lt;span property="author" typeof="Person"&gt;
+        &lt;span property="name"&gt;Author Name&lt;/span&gt;
+    &lt;/span&gt;
+    &lt;time property="datePublished"&gt;2024-12-15&lt;/time&gt;
+    &lt;div property="articleBody"&gt;...&lt;/div&gt;
+&lt;/article&gt;</code></pre>
+
+                <div class="tip-box">
+                    <strong>Tip:</strong> Use Google's Rich Results Test or the W3C RDFa Validator to verify
+                    the embedded semantic markup on any article page.
+                </div>
+            </section>
+
+            <section id="multimedia-handling">
+                <h3>5.3 Multimedia Content</h3>
+                <p>NewsProvenience handles different media types with appropriate players:</p>
+                <ul>
+                    <li><strong>Podcasts (Audio)</strong> - HTML5 audio player for podcast episodes with playback controls</li>
+                    <li><strong>Documentaries (Video)</strong> - HTML5 video player for documentary content with full-screen support</li>
+                    <li><strong>Images</strong> - Article images displayed with Schema.org ImageObject markup and alt text for accessibility</li>
+                </ul>
+            </section>
+
+            <section id="qr-codes">
+                <h3>5.4 QR Code Sharing</h3>
+                <p>
+                    Each article page includes a QR code that encodes the article's semantic URI.
+                    This enables:
+                </p>
+                <ul>
+                    <li>Quick mobile access to article pages</li>
+                    <li>Sharing provenance-verified content</li>
+                    <li>Physical-digital linking for printed materials</li>
+                </ul>
+            </section>
+        </section>
+
+        <section id="troubleshooting">
+            <h2>6. Troubleshooting</h2>
+
+            <section id="common-issues">
+                <h3>6.1 Common Issues</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Issue</th>
+                            <th>Possible Cause</th>
+                            <th>Solution</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Search returns no results</td>
+                            <td>Filters too restrictive</td>
+                            <td>Broaden date range or remove language filter</td>
+                        </tr>
+                        <tr>
+                            <td>SPARQL query error</td>
+                            <td>Syntax error in query</td>
+                            <td>Check PREFIX declarations and bracket matching</td>
+                        </tr>
+                        <tr>
+                            <td>Graph won't load</td>
+                            <td>Too many triples</td>
+                            <td>Add LIMIT clause to reduce result size</td>
+                        </tr>
+                        <tr>
+                            <td>Slow response</td>
+                            <td>Complex query or large dataset</td>
+                            <td>Add more specific filters, use LIMIT</td>
+                        </tr>
+                        <tr>
+                            <td>Media won't play</td>
+                            <td>Unsupported format or broken URL</td>
+                            <td>Check original source URL availability</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section id="sparql-errors">
+                <h3>6.2 SPARQL Error Messages</h3>
+
+                <div class="warning-box">
+                    <strong>Error: "Parse error"</strong><br>
+                    Check your SPARQL syntax. Common issues include:
+                    <ul>
+                        <li>Missing PREFIX declarations</li>
+                        <li>Unmatched curly braces <code>{ }</code></li>
+                        <li>Missing periods at end of triple patterns</li>
+                        <li>Invalid URI format (use <code>&lt;uri&gt;</code> or <code>prefix:local</code>)</li>
+                    </ul>
+                </div>
+
+                <div class="warning-box">
+                    <strong>Error: "Query timeout"</strong><br>
+                    The query is taking too long. Try:
+                    <ul>
+                        <li>Adding a <code>LIMIT</code> clause</li>
+                        <li>Being more specific with <code>FILTER</code> conditions</li>
+                        <li>Removing expensive operations like <code>COUNT</code> or <code>GROUP BY</code></li>
+                    </ul>
+                </div>
+            </section>
+        </section>
+
+        <section id="api-reference">
+            <h2>7. Quick API Reference</h2>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Operation</th>
+                        <th>Method</th>
+                        <th>Endpoint</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Create article</td>
+                        <td>POST</td>
+                        <td><code>/api/articles</code></td>
+                    </tr>
+                    <tr>
+                        <td>Get article</td>
+                        <td>GET</td>
+                        <td><code>/api/articles/{id}</code></td>
+                    </tr>
+                    <tr>
+                        <td>Search articles</td>
+                        <td>POST</td>
+                        <td><code>/api/articles/search</code></td>
+                    </tr>
+                    <tr>
+                        <td>SPARQL search</td>
+                        <td>POST</td>
+                        <td><code>/api/articles/search/sparql</code></td>
+                    </tr>
+                    <tr>
+                        <td>Export JSON-LD</td>
+                        <td>GET</td>
+                        <td><code>/api/articles/{id}/export/jsonld</code></td>
+                    </tr>
+                    <tr>
+                        <td>Export RDF</td>
+                        <td>GET</td>
+                        <td><code>/api/articles/{id}/export/rdf</code></td>
+                    </tr>
+                    <tr>
+                        <td>Custom SPARQL</td>
+                        <td>POST</td>
+                        <td><code>/api/sparql</code></td>
+                    </tr>
+                    <tr>
+                        <td>Fresh editorials</td>
+                        <td>GET</td>
+                        <td><code>/api/sparql/examples/fresh-editorials</code></td>
+                    </tr>
+                    <tr>
+                        <td>Articles by language</td>
+                        <td>GET</td>
+                        <td><code>/api/sparql/examples/articles-by-language</code></td>
+                    </tr>
+                    <tr>
+                        <td>Romanian investigations</td>
+                        <td>GET</td>
+                        <td><code>/api/sparql/examples/romanian-investigations</code></td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section id="glossary">
+            <h2>8. Glossary</h2>
+            <dl>
+                <dt>JSON-LD</dt>
+                <dd>JavaScript Object Notation for Linked Data - a method of encoding RDF data in JSON format</dd>
+
+                <dt>Provenance</dt>
+                <dd>Information about the origins, custody, and ownership of an artifact (article)</dd>
+
+                <dt>PROV-O</dt>
+                <dd>The PROV Ontology - W3C standard for representing provenance information</dd>
+
+                <dt>RDF</dt>
+                <dd>Resource Description Framework - a standard model for data interchange on the Web</dd>
+
+                <dt>RDFa</dt>
+                <dd>RDF in Attributes - a way to embed RDF data in HTML documents</dd>
+
+                <dt>SKOS</dt>
+                <dd>Simple Knowledge Organization System - W3C standard for representing taxonomies</dd>
+
+                <dt>SPARQL</dt>
+                <dd>SPARQL Protocol and RDF Query Language - query language for RDF data</dd>
+
+                <dt>Triple</dt>
+                <dd>The basic unit of RDF data: subject-predicate-object</dd>
+
+                <dt>URI</dt>
+                <dd>Uniform Resource Identifier - a unique identifier for resources</dd>
+            </dl>
+        </section>
+
+        <section id="support">
+            <h2>9. Support and Contact</h2>
+            <p>
+                For technical support or questions about NewsProvenience:
+            </p>
+            <ul>
+                <li><strong>Documentation:</strong> <a href="technical-report.html">Technical Report</a></li>
+                <li><strong>GitHub Repository:</strong> <a href="https://github.com/razcro/wade-wep">https://github.com/razcro/wade-wep</a></li>
+            </ul>
+        </section>
+    </article>
+
+    <footer>
+        <p>NewsProvenience User Guide - WADE Project 2026</p>
+    </footer>
+</body>
+</html>
