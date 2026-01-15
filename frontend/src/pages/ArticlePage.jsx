@@ -34,8 +34,7 @@ export default function ArticlePage() {
     PREFIX dc: <http://purl.org/dc/elements/1.1/>
 
     SELECT ?title ?description ?body ?language ?wordCount ?published ?genre ?url ?author ?authorName
-    WHERE {
-      GRAPH ?g {
+    WHERE {      
         <${articleUri}> a schema:NewsArticle ;
             schema:headline ?title .
         OPTIONAL { <${articleUri}> schema:description ?description . }
@@ -48,8 +47,7 @@ export default function ArticlePage() {
         OPTIONAL {
           <${articleUri}> schema:author ?author .
           OPTIONAL { ?author schema:name ?authorName . }
-        }
-      }
+        }    
     }
     LIMIT 1
   `, [articleUri]);
@@ -212,7 +210,7 @@ export default function ArticlePage() {
             if (!s || !p || !o) return;
 
             const oIsUri = o.startsWith("http");
-            if (!oIsUri) return; // MVP: ignorăm literali
+            if (!oIsUri) return;
 
             ensureNode(s);
             ensureNode(o);
@@ -227,9 +225,27 @@ export default function ArticlePage() {
         const cy = cytoscape({
             container: cyContainerRef.current,
             elements,
-            style: [
-                { selector: "node", style: { label: "data(label)", "font-size": 10, "text-wrap": "wrap", "text-max-width": 120 } },
-                { selector: "edge", style: { label: "data(label)", "font-size": 8, "curve-style": "bezier", "target-arrow-shape": "triangle" } },
+            style: [  // ← AICI CONTROLEZI STILURILE!
+                {
+                    selector: "node",
+                    style: {
+                        label: "data(label)",
+                        "font-size": 10,
+                        "color": "#ffffff",
+                        "background-color": "#555",
+                        "border-width": 2,
+                        "border-color": "#333"
+                    }
+                },
+                {
+                    selector: "edge",
+                    style: {
+                        label: "data(label)",
+                        "font-size": 8,
+                        "color": "#ffffff",
+                        "line-color": "#000000"
+                    }
+                },
             ],
             layout: { name: "cose" },
         });
@@ -250,11 +266,11 @@ export default function ArticlePage() {
             <div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
                 <div>
                     <h2 style={{ marginBottom: 4 }}>{title ?? "Article"}</h2>
-                    <div style={{ fontSize: 12, color: "#444" }}>{articleUri}</div>
+                    <div style={{ fontSize: 12, color: "#ffffff" }}>{articleUri}</div>
                 </div>
                 <div style={{ textAlign: "center" }}>
                     <QRCodeCanvas value={window.location.href} size={92} />
-                    <div style={{ fontSize: 11, color: "#444" }}>QR (article URL)</div>
+                    <div style={{ fontSize: 11, color: "#ffffff" }}>QR (article URL)</div>
                 </div>
             </div>
 
@@ -266,7 +282,6 @@ export default function ArticlePage() {
             </div>
 
             {tab === "overview" && (
-                // RDFa + schema.org: bifează cerința HTML5 + RDFa constructs
                 <article
                     vocab="http://schema.org/"
                     typeof="NewsArticle"
@@ -393,7 +408,7 @@ export default function ArticlePage() {
                     <h3 style={{ marginTop: 0 }}>Graph visualization</h3>
                     {graph.isLoading && <p>Loading…</p>}
                     <div ref={cyContainerRef} style={{ width: "100%", height: 520, border: "1px solid #eee" }} />
-                    <p style={{ fontSize: 12, color: "#444" }}>
+                    <p style={{ fontSize: 8, color: "#444" }}>
                         Vizualizare din triple SPARQL (1–2 hop-uri în jurul articolului).
                     </p>
                 </section>

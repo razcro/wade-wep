@@ -49,12 +49,14 @@ export default function ResultsPage() {
                     const published = v(b, "published");
                     const genre = v(b, "genre");
 
+                    console.log('articleUri=  ', articleUri);
+
                     return (
                         <div key={i} style={{ border: "1px solid #ddd", borderRadius: 8, padding: 12 }}>
                             <h3 style={{ margin: 0 }}>{title}</h3>
                             {description && <p style={{ marginTop: 8 }}>{description}</p>}
 
-                            <div style={{ display: "flex", gap: 12, flexWrap: "wrap", fontSize: 12, color: "#444" }}>
+                            <div style={{ display: "flex", gap: 12, flexWrap: "wrap", fontSize: 12, color: "#ffffff" }}>
                                 {published && <span>Published: {published}</span>}
                                 {language && <span>Lang: {language}</span>}
                                 {wordCount && <span>Words: {wordCount}</span>}
